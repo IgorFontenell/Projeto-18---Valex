@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 
 export default function errorHandler (error: any, req: Request, res: Response, next: NextFunction) {
-  console.log(error);
-  if (error.response) {
-    return res.sendStatus(error.response.status);
-  }
-
+  
+  if (error.type === "not_found") return res.status(404).send(error.message);
+  if (error.type === "bad_request") return res.status(400).send(error.message);
+  if (error.type === "not_acceptable") return res.status(406).send(error.message);
+  
+  
   res.sendStatus(500); // internal server error
 }
