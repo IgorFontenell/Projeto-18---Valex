@@ -19,3 +19,37 @@ export async function employeeCards(employeeId: number){
     
     return employeeCards;
 }
+
+export async function companyInsertCard(card: {
+    employeeId: number,
+    number: string,
+    cardholderName: string,
+    securityCode: string,
+    expirationDate: string,
+    isVirtual: boolean,
+    isBlocked: boolean,
+    type: string 
+}) {
+    console.log("foi?")
+    await connection.query(`
+    INSERT INTO cards (
+        "employeeId",
+        number,
+        "cardholderName",
+        "securityCode",
+        "expirationDate",
+        "isVirtual",
+        "isBlocked",
+        type) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `, [card.employeeId,
+        card.number,
+        card.cardholderName,
+        card.securityCode,
+        card.expirationDate,
+        card.isVirtual,
+        card.isBlocked,
+        card.type]);
+
+    
+}

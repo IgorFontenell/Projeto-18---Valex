@@ -2,8 +2,11 @@ import { companyExist, employeeExist, employeeCards } from "../repositories/comp
 import createCardSchema from "../schema/creatCardSchema";
 
 
-function validateCardSchema(cardInfo: any[]) {
+function validateCardSchema(cardInfo: { employeeId: number, type: string }) {
+    
+    cardInfo.employeeId = Number(cardInfo.employeeId);
     const validation =  createCardSchema.validate(cardInfo);
+    
     if(validation.error) {
         throw {type: "bad_request", message: "Registration incorrectly done! Please try again!"};
     }
