@@ -1,4 +1,8 @@
 import { companyExist, employeeExist, employeeCards } from "../repositories/companyRepository";
+import { lookingForCard } from "../repositories/companyRepository";
+import Cryptr from 'cryptr';
+import dayjs from 'dayjs';
+import bcrypt from 'bcrypt';
 
 async function companyValidation (key: string) {
     const company = await companyExist(key);
@@ -24,7 +28,26 @@ async function employeeVerify (type: string, employeeId: number) {
 }
 
 async function cardVerify (cardInfo: { number: string, securityNumber: string, password: string }) {
+    const cryptr = new Cryptr('myTotallySecretKey');
+    const card = await lookingForCard(cardInfo.number);
+   
+    if(card === undefined) {
+        throw { type: "not_found", message: "Card do not exist!" };
+    }
     
+    if(cryptr.decrypt(card.securityCode) !== cardInfo.securityNumber) {
+        throw { type: "unauthorized", message: "CVC code incorrect" }
+    }
+    
+    const today: string= dayjs().format("MM/YY");
+    if(today > card.expirationDate) {
+        throw { type: "forbidden", message: "The card already expired" }
+    }
+    
+    if(card.password !== null) {
+        throw { type: "not_acceptable", message: "The card already has a password" }
+    }
+
 }
 
 

@@ -2,7 +2,7 @@ import { validations } from "../middlewares/validations";
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
 import Cryptr from 'cryptr';
-import { companyInsertCard } from "../repositories/companyRepository";
+import { companyInsertCard, lookingForCard } from "../repositories/companyRepository";
 import { validateCreatCardSchema, validateActivateCardSchema } from "../middlewares/validateSchemas";
 
 
@@ -53,6 +53,7 @@ export async function creatCardService (key: string, createInfo: { employeeId: n
 export async function activateCardService (activateInfo: { number: string, securityNumber: string, password: string }) {
 
     validateActivateCardSchema(activateInfo);
-    // Informações validadas. Agora precisamos validar as regras de negócio.
+    await validations.cardVerify(activateInfo);
+    
 
 }

@@ -51,5 +51,10 @@ export async function companyInsertCard(card: {
         card.isBlocked,
         card.type]);
 
+}
+
+export async function lookingForCard (number : string){
+    const { rows: card } = await connection.query(`SELECT * FROM cards WHERE number = ($1)`, [number]);
     
+    return card[0];
 }
