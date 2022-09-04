@@ -6,4 +6,13 @@ const createCardSchema = joi.object({
     type: joi.string().valid('groceries', 'restaurants', 'transport', 'education', 'health').required()
 });
 
-export default createCardSchema;
+const activateCardSchema = joi.object({
+    number: joi.string().required(),
+    securityNumber: joi.string().required(),
+    password: joi.string().required()
+})
+
+export const cardSchemas = {
+    createCardSchema,
+    activateCardSchema
+};

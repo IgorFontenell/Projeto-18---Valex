@@ -30,7 +30,7 @@ export async function companyInsertCard(card: {
     isBlocked: boolean,
     type: string 
 }) {
-    console.log("foi?")
+    
     await connection.query(`
     INSERT INTO cards (
         "employeeId",

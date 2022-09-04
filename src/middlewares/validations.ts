@@ -1,16 +1,4 @@
 import { companyExist, employeeExist, employeeCards } from "../repositories/companyRepository";
-import createCardSchema from "../schema/creatCardSchema";
-
-
-function validateCardSchema(cardInfo: { employeeId: number, type: string }) {
-    
-    cardInfo.employeeId = Number(cardInfo.employeeId);
-    const validation =  createCardSchema.validate(cardInfo);
-    
-    if(validation.error) {
-        throw {type: "bad_request", message: "Registration incorrectly done! Please try again!"};
-    }
-}
 
 async function companyValidation (key: string) {
     const company = await companyExist(key);
@@ -35,10 +23,13 @@ async function employeeVerify (type: string, employeeId: number) {
     return employee;
 }
 
+async function cardVerify (cardInfo: { number: string, securityNumber: string, password: string }) {
+    
+}
 
 
 export const validations = {
     companyValidation,
-    validateCardSchema,
-    employeeVerify
+    employeeVerify,
+    cardVerify
 } 
