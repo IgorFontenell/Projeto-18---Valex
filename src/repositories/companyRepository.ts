@@ -100,31 +100,23 @@ export async function insertPassword (number: string, password: string) {
 
 export async function lookingForTransactions (cardId: number) {
     try {
+        
+        const { rows: recharges } = await connection.query(`
+        SELECT * FROM recharges WHERE "cardId" = ($1)`, [cardId])
+
         const { rows: transactions } = await connection.query(`
-        SELECT json_build_object(
-            transactions, json_agg(json_build_object(
-                'id', transactions.id, 
-                'cardId', transactions."cardId",
-                'businessId', transactions."businessId", 
-                'businessName', businesses.name, 
-                'timestamp', transactions."timestamp", 
-                'amount', transactions."amount")),
-            recharges, json_agg(json_build_object(
-                'id', recharges.id, 
-                'cardId', recharges."cardId", 
-                'timestamp', recharges."timestamp", 
-                'amount', recharges."amount")))
-        FROM payments AS transactions
-        JOIN recharges
-        ON transactions."cardId" = recharges."cardId"
-        JOIN businesses
-        ON transactions."businessId" = businesses.id
-        WHERE transactions."cardId" = ($1)
-        GROUP BY transactions.*, recharges.*
-        `, [cardId]);
-        return transactions;
+        SELECT * FROM payments AS transactions WHERE "cardId" = ($1)`, [cardId]);
+
+        const result = {
+            transactions,
+            recharges
+        }
+        
+        
+        return result;
     
     } catch(err) {
+        
         throw { trype: "server_error", message: `${err} Database with problems. Please try again!` }
     }
     

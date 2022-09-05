@@ -103,6 +103,56 @@ async function cardIsUnBlockable(card: any, password: string) {
     return;
 }
 
+async function cardIsUsable(card: any) {
+
+    if(card.isBlocked === true) {
+        throw { type: "not_acceptable", message: "The card is blocked!" }
+    }
+
+    if(card.password === null) {
+        throw { type: "not_acceptable", message: "The card is unactive!" }
+    }
+
+    const today: string= dayjs().format("MM/YY");
+    if(today > card.expirationDate) {
+        throw { type: "forbidden", message: "The card already has expired!" }
+    }
+}
+
+async function passwordVerifying(password: string, cardPassword: string) {
+
+    const cryptr = new Cryptr('myTotallySecretKey');
+    const passwordDecypt = cryptr.decrypt(cardPassword);
+
+    if(password !== passwordDecypt) {
+        throw { type: "unauthorized", message: "The password is incorrect!" }
+    }
+    return;
+    
+}
+
+async function businessVerify(businessInfo: any, cardType: string) {
+
+    if(businessInfo === undefined) {
+        throw {type: "not_found", message: "Business not found!"};
+    }
+
+    if(businessInfo.type !== cardType) {
+        throw {type: "not_acceptable", message: "Can't use this card here!"};
+    }
+
+    return;
+
+}   
+
+async function balanceVerify(buyingAmount: number, totalAmount: number) {
+
+    if(buyingAmount > totalAmount) {
+        throw {type: "not_acceptable", message: "Can't spend more than your total!"};
+    }
+    return;
+
+}   
 
 export const validations = {
     companyValidation,
@@ -110,5 +160,9 @@ export const validations = {
     cardVerify,
     cardExist,
     cardIsBlockable,
-    cardIsUnBlockable
+    cardIsUnBlockable,
+    cardIsUsable,
+    passwordVerifying,
+    businessVerify,
+    balanceVerify
 } 

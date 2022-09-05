@@ -74,18 +74,19 @@ export async function showBalanceService (number: string){
 
     const allTransactions = await lookingForTransactions(card.id);
     
-    if(allTransactions.length === 0) {
+    if(allTransactions === undefined) {
         return ({
             "balance": 0
         })
     } 
     let balance: number = 0;
+    
     allTransactions.transactions.map((object: { amount: number; }) => balance -= object.amount);
     allTransactions.recharges.map((object: { amount: number; }) => balance += object.amount);
 
     const resume = {
         "balance": balance,
-        allTransactions
+        ...allTransactions
     };
     return resume;
     
