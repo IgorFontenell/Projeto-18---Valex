@@ -9,10 +9,16 @@ const createCardSchema = joi.object({
 const activateCardSchema = joi.object({
     number: joi.string().required(),
     securityNumber: joi.string().required(),
-    password: joi.string().required()
-})
+    password: joi.string().regex(/^[0-9]{4}/).required()
+});
+
+const blockCardSchema = joi.object({
+    number: joi.string().required(),
+    password: joi.string().regex(/^[0-9]{4}$/).required()
+});
 
 export const cardSchemas = {
     createCardSchema,
-    activateCardSchema
+    activateCardSchema,
+    blockCardSchema
 };

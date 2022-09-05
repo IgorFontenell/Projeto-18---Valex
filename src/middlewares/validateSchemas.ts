@@ -1,8 +1,8 @@
-import { cardSchemas } from "../schema/creatCardSchema";
+import { cardSchemas } from "../schema/cardSchemas";
 
 export async function validateCreatCardSchema(cardInfo: { employeeId: number, type: string }) {
     
-    cardInfo.employeeId = Number(cardInfo.employeeId);
+    cardInfo.employeeId = Number(cardInfo.employeeId); 
     const validation =  cardSchemas.createCardSchema.validate(cardInfo);
     
     if(validation.error) {
@@ -10,11 +10,12 @@ export async function validateCreatCardSchema(cardInfo: { employeeId: number, ty
     }
 }
 
-export async function validateActivateCardSchema(activateInfo: { number: string, securityNumber: string, password: string }) {
-    
-    const validation =  cardSchemas.activateCardSchema.validate(activateInfo);
-   
+
+export async function validateSchemas(schema: any, requestInfo: any) {
+
+    const validation = schema.validate(requestInfo);
+
     if(validation.error) {
         throw {type: "bad_request", message: "Registration incorrectly done! Please try again!"};
     }
-} 
+}

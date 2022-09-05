@@ -2,7 +2,7 @@ import { companyExist, employeeExist, employeeCards } from "../repositories/comp
 import { lookingForCard } from "../repositories/companyRepository";
 import Cryptr from 'cryptr';
 import dayjs from 'dayjs';
-import bcrypt from 'bcrypt';
+
 
 async function companyValidation (key: string) {
     const company = await companyExist(key);
@@ -41,7 +41,7 @@ async function cardVerify (cardInfo: { number: string, securityNumber: string, p
     
     const today: string= dayjs().format("MM/YY");
     if(today > card.expirationDate) {
-        throw { type: "forbidden", message: "The card already expired" }
+        throw { type: "forbidden", message: "The card already has expired" }
     }
     
     if(card.password !== null) {
@@ -50,9 +50,65 @@ async function cardVerify (cardInfo: { number: string, securityNumber: string, p
 
 }
 
+async function cardExist(card: any) {
+    if(card === undefined) {
+        throw {type: "not_found", message: "Card not found!"};
+    }
+}
+
+async function cardIsBlockable(card: any, password: string) {
+
+    if(card === undefined) {
+        throw {type: "not_found", message: "Card not found!"};
+    }
+
+    const today: string= dayjs().format("MM/YY");
+    if(today > card.expirationDate) {
+        throw { type: "forbidden", message: "The card already has expired!" }
+    }
+
+    if(card.isBlocked === true) {
+        throw { type: "not_acceptable", message: "The card is already blocked!" }
+    }
+
+    const cryptr = new Cryptr('myTotallySecretKey');
+    const passwordDecypt = cryptr.decrypt(card.password);
+    if(password !== passwordDecypt) {
+        throw { type: "unauthorized", message: "The password is incorrect!" }
+    }
+
+    return;
+}
+async function cardIsUnBlockable(card: any, password: string) {
+
+    if(card === undefined) {
+        throw {type: "not_found", message: "Card not found!"};
+    }
+
+    const today: string= dayjs().format("MM/YY");
+    if(today > card.expirationDate) {
+        throw { type: "forbidden", message: "The card already has expired!" }
+    }
+
+    if(card.isBlocked === false) {
+        throw { type: "not_acceptable", message: "The card isn't blocked!" }
+    }
+
+    const cryptr = new Cryptr('myTotallySecretKey');
+    const passwordDecypt = cryptr.decrypt(card.password);
+    if(password !== passwordDecypt) {
+        throw { type: "unauthorized", message: "The password is incorrect!" }
+    }
+
+    return;
+}
+
 
 export const validations = {
     companyValidation,
     employeeVerify,
-    cardVerify
+    cardVerify,
+    cardExist,
+    cardIsBlockable,
+    cardIsUnBlockable
 } 
